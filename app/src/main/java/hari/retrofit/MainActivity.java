@@ -2,6 +2,7 @@ package hari.retrofit;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,17 +11,24 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     private EditText name_text, phone_number_text;
     private RadioGroup genderGroup;
     private Button submit;
     private CheckBox terms_cb;
+    private JSONObject infoObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //create Json
-                JSONObject jsonObject = null;
+                infoObject = new JSONObject();
 
                 try {
-                    jsonObject = new JSONObject();
-                    jsonObject.put("name", name_text.getText().toString());
-                    jsonObject.put("phone", phone_number_text.getText().toString());
+
+                    infoObject.put("name", name_text.getText().toString());
+                    infoObject.put("phone", phone_number_text.getText().toString());
 
                     //ask radio group to find selected radio button
                     int selectedGender = genderGroup.getCheckedRadioButtonId();
@@ -72,13 +80,63 @@ public class MainActivity extends AppCompatActivity {
                     RadioButton radioSexButton = (RadioButton) findViewById(selectedGender);
 
                     //get text from id
-                    jsonObject.put("gender", radioSexButton.getText());
+                    infoObject.put("gender", radioSexButton.getText());
+
+                    //json string to bytes
+                    byte[] data = infoObject.toString().getBytes("UTF-8");
+
+                    //bytes to base64
+                    String base64String = Base64.encodeToString(data, Base64.DEFAULT);
+
+                    //add internet permissions to manifest
+
+                    //add retrofit,gson dependency to build.gradle
+
+                    //create retrofit
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("http://ip-api.com")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    //create service
+                    IpApiService ipApiService = retrofit.create(IpApiService.class);
+
+                    //enqueue call
+                    ipApiService.getLocationInfor().enqueue(new Callback<IpApiResponseModel>() {
+
+                        @Override
+                        public void onResponse(Response<IpApiResponseModel> response, Retrofit retrofit) {
+                            if (response.isSuccess()) {
+                                IpApiResponseModel ipApiResponseModel = response.body();
+
+                                JSONObject geo = new JSONObject();
+                                try {
+                                    geo.put("lat", ipApiResponseModel.getLat());
+                                    geo.put("lon", ipApiResponseModel.getLon());
+
+                                    //add geo object to infoJson
+                                    infoObject.put("geo", geo);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+
+                        }
+                    });
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
-
-
             }
         });
     }
