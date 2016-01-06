@@ -82,24 +82,19 @@ public class MainActivity extends AppCompatActivity {
                     //get text from id
                     infoObject.put("gender", radioSexButton.getText());
 
-                    //json string to bytes
-                    byte[] data = infoObject.toString().getBytes("UTF-8");
-
-                    //bytes to base64
-                    String base64String = Base64.encodeToString(data, Base64.DEFAULT);
-
+//-----------------------------------------RETROFIT-IP-API-----------------------------------------------------
                     //add internet permissions to manifest
 
                     //add retrofit,gson dependency to build.gradle
 
                     //create retrofit
-                    Retrofit retrofit = new Retrofit.Builder()
+                    Retrofit ipApiRetrofit = new Retrofit.Builder()
                             .baseUrl("http://ip-api.com")
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
 
                     //create service
-                    IpApiService ipApiService = retrofit.create(IpApiService.class);
+                    IpApiService ipApiService = ipApiRetrofit.create(IpApiService.class);
 
                     //enqueue call
                     ipApiService.getLocationInfor().enqueue(new Callback<IpApiResponseModel>() {
@@ -117,7 +112,34 @@ public class MainActivity extends AppCompatActivity {
                                     //add geo object to infoJson
                                     infoObject.put("geo", geo);
 
+//-----------------------------------------BASE-64-----------------------------------------------------
+
+                                    //json string to bytes
+                                    byte[] data = infoObject.toString().getBytes("UTF-8");
+
+                                    //bytes to base64
+                                    String base64String = Base64.encodeToString(data, Base64.DEFAULT);
+
+//-----------------------------------------RETROFIT-CREATE-DOCUMENT--------------------------------------
+
+
+                                    Retrofit trueVaultRetrofit = new Retrofit.Builder()
+                                            .baseUrl("https://api.truevault.com")
+                                            .addConverterFactory(GsonConverterFactory.create())
+                                            .build();
+
+                                    TrueVaultApiService trueVaultApiService = trueVaultRetrofit.create(TrueVaultApiService.class);
+
+                                    trueVaultApiService.createDocument("","",base64String);
+
+
+
+
+
+
                                 } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
                             } else {
@@ -133,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
