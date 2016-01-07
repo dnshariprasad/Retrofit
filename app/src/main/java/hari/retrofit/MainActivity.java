@@ -3,6 +3,7 @@ package hari.retrofit;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,12 +131,26 @@ public class MainActivity extends AppCompatActivity {
 
                                     TrueVaultApiService trueVaultApiService = trueVaultRetrofit.create(TrueVaultApiService.class);
 
-                                    trueVaultApiService.createDocument("","",base64String);
+                                    //for authorization
+                                    //json string to bytes
+                                    byte[] apiData = "07c50bed-ae20-4ca1-b1a5-af7572b9f833:".toString().getBytes("UTF-8");
+
+                                    //bytes to base64
+                                    String apiBase64String = Base64.encodeToString(apiData, Base64.DEFAULT);
 
 
-
-
-
+                                    trueVaultApiService.createDocument("Basic " + apiBase64String.replace("\n", ""), "cca3c545-8504-46de-ac18-15676860b313", base64String).enqueue(new Callback<CreateDocumentResponse>() {
+                                        @Override
+                                        public void onResponse(Response<CreateDocumentResponse> response, Retrofit retrofit) {
+                                            if (response.isSuccess()) {
+                                                Toast.makeText(MainActivity.this, "Done", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(Throwable t) {
+                                            Log.d("", "");
+                                        }
+                                    });
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
