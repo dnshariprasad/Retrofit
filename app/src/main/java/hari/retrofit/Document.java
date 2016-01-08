@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -58,6 +60,10 @@ public class Document {
 
     public static Document toPojo(String json) {
         return new Gson().fromJson(json, Document.class);
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this, Document.class);
     }
 
     class geo {
