@@ -1,5 +1,6 @@
 package hari.retrofit;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -123,12 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
 //-----------------------------------------RETROFIT-CREATE-DOCUMENT--------------------------------------
 
-
+                                    // create true vault retrofit
                                     Retrofit trueVaultRetrofit = new Retrofit.Builder()
                                             .baseUrl("https://api.truevault.com")
                                             .addConverterFactory(GsonConverterFactory.create())
                                             .build();
 
+                                    //create true vault APi service
                                     TrueVaultApiService trueVaultApiService = trueVaultRetrofit.create(TrueVaultApiService.class);
 
                                     //for authorization
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Toast.makeText(MainActivity.this, "Done", Toast.LENGTH_LONG).show();
                                             }
                                         }
+
                                         @Override
                                         public void onFailure(Throwable t) {
                                             Log.d("", "");
@@ -178,23 +181,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);//Menu Resource, Menu
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.clear) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.clear:
+                Toast.makeText(getApplicationContext(),"Clear",Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.list:
+                Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
+
 }

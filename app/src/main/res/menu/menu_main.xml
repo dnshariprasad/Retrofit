@@ -6,4 +6,8 @@
         android:icon="@mipmap/ic_launcher"
         android:title="Clear"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/list"
+        android:icon="@mipmap/ic_launcher"
+        android:title="List" />
 </menu>
