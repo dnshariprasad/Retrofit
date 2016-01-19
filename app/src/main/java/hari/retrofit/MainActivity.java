@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                clearFields();
             }
         });
     }
@@ -184,11 +185,13 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);//Menu Resource, Menu
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.clear:
-                Toast.makeText(getApplicationContext(),"Clear",Toast.LENGTH_LONG).show();
+                clearFields();
+                Toast.makeText(getApplicationContext(), "Clear", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.list:
                 Intent intent = new Intent(MainActivity.this, ListActivity.class);
@@ -199,4 +202,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void clearFields() {
+        name_text.setText("");
+        phone_number_text.setText("");
+        terms_cb.setChecked(false);
+        genderGroup.clearCheck();
+    }
 }
