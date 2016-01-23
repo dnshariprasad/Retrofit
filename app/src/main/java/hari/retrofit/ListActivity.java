@@ -1,7 +1,7 @@
 package hari.retrofit;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
@@ -59,8 +58,11 @@ public class ListActivity extends AppCompatActivity {
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }
-                            if (text != null)
-                                documents.add(Document.toPojo(text.toString()));
+                            if (text != null) {
+                                Document document = Document.toPojo(text.toString());
+                                document.setDocId(item.getDocument());
+                                documents.add(document);
+                            }
                         }
 
 
